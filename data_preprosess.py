@@ -8,9 +8,13 @@ def load_and_clean(path: str | Path,
     df = pd.read_csv(path, usecols=cols_keep)
 
     df = df[df["PostTypeId"].isin([1, 2])].copy()
+    df = df[df["OwnerUserId"].notna()].copy()
+
+    #chage score=0 to score=1
+    df.loc[df['Score'] == 0, 'Score'] = 1
 
     df["CreationDate"] = pd.to_datetime(df["CreationDate"], utc=True)
-    df["Timestamp"] = df["CreationDate"].view("int64") // 10 ** 9
+    df["Timestamp"] = df["CreationDate"].astype("int64") // 10 ** 9
     df.drop(columns="CreationDate", inplace=True)
 
     df["OwnerUserId"] = df["OwnerUserId"].astype("Int64")
@@ -27,7 +31,7 @@ def load_and_clean(path: str | Path,
 
 
 if __name__ == "__main__":
-    dataset_path = "sample_data.csv"
+    dataset_path = "data/sample_data.csv"
     df = load_and_clean(dataset_path)
 
 
