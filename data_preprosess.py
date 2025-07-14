@@ -1,6 +1,9 @@
 import pandas as pd
 from pathlib import Path
 
+from logger import get_logger
+logger = get_logger(__name__, log_file="results/engage.log")
+
 def load_and_clean(path: str | Path,
                    cols_keep=("Id", "PostTypeId", "CreationDate", "Score",
                               "OwnerUserId", "Tags", "ParentId")) -> pd.DataFrame:
@@ -26,7 +29,7 @@ def load_and_clean(path: str | Path,
                   .str.split("|")
                   .apply(lambda lst: lst if lst != [""] else None))
     
-
+    logger.info(f"Data loaded and cleaned: {len(df):,} rows and {len(df.columns)} columns")
     return df
 
 
