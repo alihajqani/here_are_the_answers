@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix
 
 from data_preprosess import load_and_clean
+from logger import get_logger
+
+
+logger = get_logger(__name__, log_file="results/engage.log")
 
 
 def build_E_G(df: pd.DataFrame, lambda_decay=0.2, now_ts=None):
@@ -67,6 +71,7 @@ def build_E_G(df: pd.DataFrame, lambda_decay=0.2, now_ts=None):
     
     ans.to_csv('results/ans.csv', index=False)
     grp.to_csv('results/grp.csv', index=False)
+    logger.info(f"Saved ans and grp matrices to results directory.")
 
     # dense = E.toarray()
     # e_df = pd.DataFrame(dense)
@@ -77,7 +82,8 @@ def build_E_G(df: pd.DataFrame, lambda_decay=0.2, now_ts=None):
     # g_df.to_csv('results/G.csv', index=False)
 
 
-
+    logger.info(f"Built E matrix with shape {E.shape} and G matrix with shape {G.shape}")
+    logger.info(f"Total users: {len(user_ids)}, Total tags: {len(tag_ids)}")
     return E, G, user_ids, tag_ids
 
 
