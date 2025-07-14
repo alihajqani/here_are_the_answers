@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
         # Load and clean the data
         logger.info("Loading and cleaning data started")
-        df = load_and_clean("data/sample_data.csv")
+        df = load_and_clean("data/train_data.csv")
         logger.info("Data loaded and cleaned successfully")
         
         # Build E and G matrices

@@ -8,7 +8,9 @@ def load_and_clean(path: str | Path,
                    cols_keep=("Id", "PostTypeId", "CreationDate", "Score",
                               "OwnerUserId", "Tags", "ParentId")) -> pd.DataFrame:
     
-    df = pd.read_csv(path, usecols=cols_keep)
+    # df_xml = pd.read_xml("data/train_data.xml")
+    # df_xml.to_csv("data/train_data.csv", index=False)
+    df = pd.read_csv("data/train_data.csv", usecols=cols_keep)
 
     df = df[df["PostTypeId"].isin([1, 2])].copy()
     df = df[df["OwnerUserId"].notna()].copy()
@@ -16,7 +18,7 @@ def load_and_clean(path: str | Path,
     #chage score=0 to score=1
     df.loc[df['Score'] == 0, 'Score'] = 1
 
-    df["CreationDate"] = pd.to_datetime(df["CreationDate"], utc=True)
+    df["CreationDate"] = pd.to_datetime(df["CreationDate"], format="mixed")
     df["Timestamp"] = df["CreationDate"].astype("int64") // 10 ** 9
     df.drop(columns="CreationDate", inplace=True)
 

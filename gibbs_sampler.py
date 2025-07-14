@@ -71,12 +71,12 @@ class EngageGibbs:
 
         # Λ ~ Wishart(ν0+c, W_star)
         Lambda = wishart(df=nu0 + c, scale=W_star).rvs(random_state=self.rng)
-        logger.info(f"Sampled Lambda from Wishart distribution (updatated precision matrix) for {X}")
+        logger.info(f"Sampled Lambda from Wishart distribution (updatated precision matrix)")
 
         # μ | Λ ~ N(mu_star, (beta_star Λ)^-1)
         cov_mu = inv(beta_star * Lambda)
         mu     = self.rng.multivariate_normal(mu_star, cov_mu)
-        logger.info(f"Sampled Mu from multivariate normal distribution (updatated mean vector) for {X}")
+        logger.info(f"Sampled Mu from multivariate normal distribution (updatated mean vector)")
 
         return mu, Lambda
 
