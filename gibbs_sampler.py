@@ -39,7 +39,6 @@ class EngageGibbs:
         self.tag_nonzero  = [E[:, t].indices for t in range(n_tags)]
         self.G_rows       = [G[u].indices for u in range(n_users)]
 
-    # --------------------------------------------------------------------- #
 
     # ----- helpers for conditional draws ---------------------------------- #
     def _sample_theta(self, X, prior: NormalWishartPrior):
@@ -75,7 +74,7 @@ class EngageGibbs:
 
         return mu, Lambda
 
-    # --------------------------------------------------------------------- #
+    # ------ One full Gibbs iteration ----------------------------------------- #
     def step(self):
         """One full Gibbs iteration."""
 
@@ -108,7 +107,43 @@ class EngageGibbs:
                 g_w = self.G[u, self.G_rows[u]].toarray().ravel()  # ← (|nbrs|,)
                 rhs += self.beta * (self.L[:, self.G_rows[u]] @ g_w)
 
+            # jitter & symmetrize
+            eps = 1e-8
+            precision += eps * np.eye(K)
+            precision = (precision + precision.T) / 2
+
+
+            # -------------[FOR DEBUG]-------------
+            # tol = 1e-4
+
+            # if u%1000 == 0:
+            #     print(u)
+
+            # if np.allclose(precision, precision.T, atol=tol):
+            #     pass
+            # else:
+            #     print(f'nok{u}')
+
+
+            # eigvals = np.linalg.eigvalsh(precision)
+            # min_ev = eigvals.min()
+            # # print("min eigen val:", min_ev)
+            # if min_ev >= 0:
+            #     pass
+            # else:
+            #     print(f"NSD (min eigen = {min_ev})")
+
+            # --------------------------------------------
+
             cov = inv(precision)
+            
+            # jitter & symmetrize
+            cov = (cov + cov.T) / 2
+            eig_min = np.linalg.eigvalsh(cov).min()
+            if eig_min < eps:
+                cov += (eps - eig_min) * np.eye(K)
+
+
             self.L[:, u] = self.rng.multivariate_normal(cov @ rhs, cov)
 
         # --- 3. update latent vectors H_t  (Eq. 6) ---------------------------
@@ -134,6 +169,7 @@ class EngageGibbs:
         """
         samples = []
         for h in range(1, n_iter + 1):
+            print(f"[Info]  >>>>>>  : iteration number: {h}")
             self.step()
             if h > burn_in and (h - burn_in) % thin == 0:
                 samples.append((self.L.copy(), self.H.copy()))
