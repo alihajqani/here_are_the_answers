@@ -68,13 +68,13 @@ def build_E_G(df: pd.DataFrame, lambda_decay=0.2, now_ts=None):
     ans.to_csv('results/ans.csv', index=False)
     grp.to_csv('results/grp.csv', index=False)
 
-    dense = E.toarray()
-    e_df = pd.DataFrame(dense)
-    e_df.to_csv('results/E.csv', index=False)
+    # dense = E.toarray()
+    # e_df = pd.DataFrame(dense)
+    # e_df.to_csv('results/E.csv', index=False)
 
-    dense = G.toarray()
-    g_df = pd.DataFrame(dense)
-    g_df.to_csv('results/G.csv', index=False)
+    # dense = G.toarray()
+    # g_df = pd.DataFrame(dense)
+    # g_df.to_csv('results/G.csv', index=False)
 
 
 
