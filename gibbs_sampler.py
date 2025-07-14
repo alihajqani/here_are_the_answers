@@ -1,9 +1,12 @@
 # gibbs_sampler.py
 import numpy as np
 from numpy.linalg import inv
-from scipy.stats import wishart, multivariate_normal as mvn
 from scipy.sparse import csr_matrix
 from priors import NormalWishartPrior
+from scipy.stats import wishart, multivariate_normal as mvn
+
+from logger import get_logger
+logger = get_logger(__name__, log_file="results/engage.log")
 
 
 class EngageGibbs:
@@ -33,6 +36,7 @@ class EngageGibbs:
         # --- initial samples --------------------------------------------------
         self.L, self.mu_L, self.Lambda_L = self.prior_L.sample_latent_matrix(n_users)
         self.H, self.mu_H, self.Lambda_H = self.prior_H.sample_latent_matrix(n_tags)
+        logger.info(f"Initialized EngageGibbs with L shape {self.L.shape}, H shape {self.H.shape}, E shape {E.shape}, G shape {G.shape}")
 
         # pre-compute sparse indices
         self.user_nonzero = [E[u].indices for u in range(n_users)]
@@ -67,20 +71,23 @@ class EngageGibbs:
 
         # Λ ~ Wishart(ν0+c, W_star)
         Lambda = wishart(df=nu0 + c, scale=W_star).rvs(random_state=self.rng)
+        logger.info(f"Sampled Lambda from Wishart distribution (updatated precision matrix) for {X}")
 
         # μ | Λ ~ N(mu_star, (beta_star Λ)^-1)
         cov_mu = inv(beta_star * Lambda)
         mu     = self.rng.multivariate_normal(mu_star, cov_mu)
+        logger.info(f"Sampled Mu from multivariate normal distribution (updatated mean vector) for {X}")
 
         return mu, Lambda
 
     # ------ One full Gibbs iteration ----------------------------------------- #
     def step(self):
         """One full Gibbs iteration."""
-
+        logger.info("Starting a new Gibbs step...")
         # --- 1. update hyper-parameters Θ_L , Θ_H ----------------------------
         self.mu_L, self.Lambda_L = self._sample_theta(self.L, self.prior_L)
         self.mu_H, self.Lambda_H = self._sample_theta(self.H, self.prior_H)
+        logger.info(f"Updated hyperparameters: mu_L, Lambda_L, mu_H, Lambda_H")
 
         # --- 2. update latent vectors L_u  (Eq. 5) ---------------------------
         K = self.K
@@ -146,6 +153,10 @@ class EngageGibbs:
 
             self.L[:, u] = self.rng.multivariate_normal(cov @ rhs, cov)
 
+
+            if u % 1000 == 0:
+                logger.info(f"Updated latent vector L[:, {u}] from {self.L.shape[1]} users.")
+
         # --- 3. update latent vectors H_t  (Eq. 6) ---------------------------
         for t in range(self.H.shape[1]):
             users = self.tag_nonzero[t]
@@ -162,6 +173,9 @@ class EngageGibbs:
             cov = inv(precision)
             self.H[:, t] = self.rng.multivariate_normal(cov @ rhs, cov)
 
+            if t % 500 == 0:
+                logger.info(f"Updated latent vector H[:, {t}] from {self.H.shape[1]} tags.")
+
     # --------------------------------------------------------------------- #
     def run(self, n_iter=3000, burn_in=1000, thin=10):
         """
@@ -169,8 +183,10 @@ class EngageGibbs:
         """
         samples = []
         for h in range(1, n_iter + 1):
-            print(f"[Info]  >>>>>>  : iteration number: {h}")
+            logger.info(f"------------------- Running Gibbs iteration {h}/{n_iter} -------------------")
             self.step()
+            logger.info(f"------------------- Completed Gibbs iteration {h} -------------------")
             if h > burn_in and (h - burn_in) % thin == 0:
-                samples.append((self.L.copy(), self.H.copy()))
+                samples.append((self.L.copy(), self.H.copy()))  
         return samples
+ 
