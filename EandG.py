@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+from scipy import sparse
 import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix
 
@@ -73,13 +74,14 @@ def build_E_G(df: pd.DataFrame, lambda_decay=0.2, now_ts=None):
     grp.to_csv('results/grp.csv', index=False)
     logger.info(f"Saved ans and grp matrices to results directory.")
 
-    # dense = E.toarray()
-    # e_df = pd.DataFrame(dense)
-    # e_df.to_csv('results/E.csv', index=False)
+    sparse.save_npz('results/E.npz', E)
+    sparse.save_npz('results/G.npz', G)
+    logger.info(f"Saved E and G matrices to results directory.")
 
-    # dense = G.toarray()
-    # g_df = pd.DataFrame(dense)
-    # g_df.to_csv('results/G.csv', index=False)
+    user_ids = pd.Index(pd.read_csv('results/user_ids.csv', header=None)[0], name='UserId')
+    tag_ids  = pd.Index(pd.read_csv('results/tag_ids.csv',  header=None)[0], name='Tag')
+    logger.info(f"Loaded user_ids and tag_ids from results directory.")
+
 
 
     logger.info(f"Built E matrix with shape {E.shape} and G matrix with shape {G.shape}")
