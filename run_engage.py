@@ -5,6 +5,7 @@ from EandG import build_E_G
 from logger import get_logger
 from gibbs_sampler import EngageGibbs
 from data_preprosess import load_and_clean
+from E_hat_E_filled import build_E_new
 
 if __name__ == "__main__":
 
@@ -42,6 +43,11 @@ if __name__ == "__main__":
         with open("results/engage_samples.pkl", "wb") as f:
             pickle.dump(samples, f)
             logger.info("Samples saved to results/engage_samples.pkl")
+
+        # Generate E_new
+        E_new = build_E_new(E=E)
+        
+
     
     except Exception as e:
         logger.error(f"An error occurred: {e}")
