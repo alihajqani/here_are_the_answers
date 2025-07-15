@@ -1,16 +1,20 @@
+# data_preprosess.py
+
 import pandas as pd
 from pathlib import Path
 
 from logger import get_logger
 logger = get_logger(__name__, log_file="results/engage.log")
 
-def load_and_clean(path: str | Path,
+def load_and_clean(xml_path: str | Path,
                    cols_keep=("Id", "PostTypeId", "CreationDate", "Score",
                               "OwnerUserId", "Tags", "ParentId")) -> pd.DataFrame:
     
-    # df_xml = pd.read_xml("data/train_data.xml")
-    # df_xml.to_csv("data/train_data.csv", index=False)
-    df = pd.read_csv("data/train_data.csv", usecols=cols_keep)
+    xml_path = Path(xml_path)
+    df_xml = pd.read_xml(xml_path)
+    csv_path = xml_path.with_suffix(".csv")
+    df_xml.to_csv(csv_path, index=False)
+    df = pd.read_csv(csv_path, usecols=cols_keep)
 
     df = df[df["PostTypeId"].isin([1, 2])].copy()
     df = df[df["OwnerUserId"].notna()].copy()
@@ -32,11 +36,17 @@ def load_and_clean(path: str | Path,
                   .apply(lambda lst: lst if lst != [""] else None))
     
     logger.info(f"Data loaded and cleaned: {len(df):,} rows and {len(df.columns)} columns")
+
+    clean_csv_path = xml_path.with_name(f"{xml_path.stem}_clean.csv")
+    df.to_csv(clean_csv_path, index=False)
+    logger.info(f"{xml_path.stem}_clean.csv save in {clean_csv_path}")
+
     return df
 
 
+
 if __name__ == "__main__":
-    dataset_path = "data/sample_data.csv"
+    dataset_path = "data/train_data.xml"
     df = load_and_clean(dataset_path)
 
 
