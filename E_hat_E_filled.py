@@ -19,13 +19,15 @@ def build_E_new(path: str = "results/engage_samples.pkl", E: np.ndarray = None):
     # --------- Compute the average engagement matrix E_hat ---------
     logger.info("Computing the average engagement matrix E_hat")
     S = len(samples)
-    n_users, K = samples[0][0].shape     # L.shape = (n_users, K)
-    n_tags       = samples[0][1].shape[0]
+    K, n_users = samples[0][0].shape   # L.shape = (K, n_users)
+    n_tags     = samples[0][1].shape[1]  # H.shape = (K, n_tags)
+    logger.info(f"Number of n_users: {n_users}, n_tags: {n_tags}")
 
     E_hat = np.zeros((n_users, n_tags), dtype=np.float64)
+    logger.info(f"Shape of E_hat is {E_hat.shape}")
 
     for s, (L, H) in enumerate(samples, 1):
-        E_hat += (L @ H.T - E_hat) / s
+        E_hat += (L.T @ H - E_hat) / s
 
 
     E_hat /= S
