@@ -1,5 +1,6 @@
 import os
 import pickle
+from scipy.sparse import load_npz
 
 from EandG import build_E_G
 from logger import get_logger
@@ -20,7 +21,7 @@ if __name__ == "__main__":
 
         # Load and clean the data
         logger.info("Loading and cleaning data started")
-        df = load_and_clean("data/train_data.csv")
+        df = load_and_clean("data/train_dataset.xml")
         logger.info("Data loaded and cleaned successfully")
         
         # Build E and G matrices
@@ -43,6 +44,12 @@ if __name__ == "__main__":
         with open("results/engage_samples.pkl", "wb") as f:
             pickle.dump(samples, f)
             logger.info("Samples saved to results/engage_samples.pkl")
+
+        # Load the E matrix from the saved file
+        logger.info("Loading E matrix from results/E.npz use numpy")
+        E_sparse = load_npz("results/E.npz")      
+        E = E_sparse.toarray()
+
 
         # Generate E_new
         E_new = build_E_new(E=E)
