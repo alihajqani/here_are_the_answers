@@ -78,9 +78,9 @@ def build_E_G(df: pd.DataFrame, lambda_decay=0.2, now_ts=None):
     sparse.save_npz('results/G.npz', G)
     logger.info(f"Saved E and G matrices to results directory.")
 
-    user_ids = pd.Index(pd.read_csv('results/user_ids.csv', header=None)[0], name='UserId')
-    tag_ids  = pd.Index(pd.read_csv('results/tag_ids.csv',  header=None)[0], name='Tag')
-    logger.info(f"Loaded user_ids and tag_ids from results directory.")
+    user_ids.to_series(index=None).to_csv('results/user_ids.csv', header=False, index=False)
+    tag_ids.to_series(index=None).to_csv('results/tag_ids.csv', header=False, index=False)
+    logger.info(f"Saved user and tag indices to results directory.")
 
 
 
@@ -92,5 +92,5 @@ def build_E_G(df: pd.DataFrame, lambda_decay=0.2, now_ts=None):
 
 
 if __name__ == "__main__":
-    df = load_and_clean("data/sample_data.csv") 
+    df = load_and_clean("data/train_data.xml") 
     build_E_G(df=df)
