@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
         # Load and clean the data
         logger.info("Loading and cleaning data started")
-        df = load_and_clean("data/train_dataset.xml")
+        df = load_and_clean("data/train_filtered.xml")
         logger.info("Data loaded and cleaned successfully")
         
         # Build E and G matrices
