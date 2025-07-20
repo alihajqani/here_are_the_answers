@@ -126,14 +126,15 @@ def evaluate(questions: pd.DataFrame,
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate ENGAGE on a test set")
-    parser.add_argument("--test", required=True,
-                        help="Path to StackExchange test dump (.xml or .csv)")
-    parser.add_argument("--top_k", type=int, default=5,
-                        help="k for Precision@k, etc. [default: 5]")
+    # parser.add_argument("--test", required=True,
+    #                     help="Path to StackExchange test dump (.xml or .csv)")
+    # parser.add_argument("--top_k", type=int, default=5,
+    #                     help="k for Precision@k, etc. [default: 5]")
     args = parser.parse_args()
-
+    args.test = "data/test_data.xml"
+    args.top_k = 5
     # 1. data ----------------------------------------------------------------
-    logger.info("Loading and cleaning test data…")
+    # logger.info("Loading and cleaning test data…")
     df_test = load_and_clean(args.test)
 
     # split into Q/A
