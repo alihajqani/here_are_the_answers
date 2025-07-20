@@ -29,15 +29,15 @@ def build_E_G(df: pd.DataFrame, lambda_decay=0.2, now_ts=None):
     age_years = (now_ts - ans['Timestamp']) / (365*24*60*60)
     decay = np.exp(-lambda_decay * age_years)
 
-    plt.figure(figsize=(8, 5))
-    plt.plot(age_years, decay, marker='o', linestyle='-')
-    plt.xlabel('age (year)')
-    plt.ylabel('decay')
-    plt.title('Decay vs Age Years')
-    plt.savefig('results/decay_vs_age_years.png')
-    plt.grid(True)
-    plt.tight_layout()
-    plt.close()
+    # plt.figure(figsize=(8, 5))
+    # plt.plot(age_years, decay, marker='o', linestyle='-')
+    # plt.xlabel('age (year)')
+    # plt.ylabel('decay')
+    # plt.title('Decay vs Age Years')
+    # plt.savefig('results/decay_vs_age_years.png')
+    # plt.grid(True)
+    # plt.tight_layout()
+    # plt.close()
 
     ans['w_num'] = ans['Score'] * decay
     ans['w_den'] = decay
@@ -76,6 +76,10 @@ def build_E_G(df: pd.DataFrame, lambda_decay=0.2, now_ts=None):
 
     sparse.save_npz('results/E.npz', E)
     sparse.save_npz('results/G.npz', G)
+    # E = sparse.load_npz('results/E.npz')
+    # G = sparse.load_npz('results/G.npz')
+    # np.savetxt('results/E.csv', E.toarray(), delimiter=',')
+    # np.savetxt('results/G.csv', G.toarray(), delimiter=',')
     logger.info(f"Saved E and G matrices to results directory.")
 
     user_ids.to_series(index=None).to_csv('results/user_ids.csv', header=False, index=False)
