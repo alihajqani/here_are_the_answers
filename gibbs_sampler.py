@@ -115,7 +115,7 @@ class EngageGibbs:
                 rhs += self.beta * (self.L[:, self.G_rows[u]] @ g_w)
 
             # jitter & symmetrize
-            eps = 1e-8
+            eps = 1e-5
             precision += eps * np.eye(K)
             precision = (precision + precision.T) / 2
 
@@ -154,7 +154,7 @@ class EngageGibbs:
             self.L[:, u] = self.rng.multivariate_normal(cov @ rhs, cov)
 
 
-            if u % 1000 == 0:
+            if u % 5000 == 0:
                 logger.info(f"Updated latent vector L[:, {u}] from {self.L.shape[1]} users.")
 
         # --- 3. update latent vectors H_t  (Eq. 6) ---------------------------
@@ -173,7 +173,7 @@ class EngageGibbs:
             cov = inv(precision)
             self.H[:, t] = self.rng.multivariate_normal(cov @ rhs, cov)
 
-            if t % 500 == 0:
+            if t % 1000 == 0:
                 logger.info(f"Updated latent vector H[:, {t}] from {self.H.shape[1]} tags.")
 
     # --------------------------------------------------------------------- #
