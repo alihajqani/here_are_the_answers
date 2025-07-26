@@ -5,15 +5,15 @@ This repository contains a Python implementation of the ENGAGE model for time-se
 
 ## Project Structure
 
-├── check\_dataset.py
+├── check_dataset.py
 
-├── data\_preprosess.py
+├── data_preprosess.py
 
 ├── EandG.py
 
-├── E\_hat\_E\_filled.py
+├── E_hat_E_filled.py
 
-├── gibbs\_sampler.py
+├── gibbs_sampler.py
 
 ├── logger.py
 
@@ -21,9 +21,9 @@ This repository contains a Python implementation of the ENGAGE model for time-se
 
 ├── requirements.txt
 
-├── run\_engage.py
+├── run_engage.py
 
-└── test\_engage.py
+└── test_engage.py
 
 
 - **check_dataset.py**  
@@ -60,14 +60,14 @@ This repository contains a Python implementation of the ENGAGE model for time-se
 
 1. Clone the repository  
    ```bash
-   git clone https://github.com/yourusername/engage-model.git
-   cd engage-model
+   git clone https://github.com/alihajqani/here_are_the_answers.git
+   cd here_are_the_answers
 
 2. Create a virtual environment and install dependencies
 
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate
+   python3 -m venv .venv
+   source .venv/bin/activate
    pip install -r requirements.txt
    ```
 
