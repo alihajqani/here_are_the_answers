@@ -31,21 +31,35 @@ This repository contains a Python implementation of the ENGAGE model for time-se
 
 - **data_preprosess.py**  
   Load, clean, timestamp and split posts
+  ```
+  Note: In data preprosess we change score 0 to 1 and timestamp base on year.(for E)
+  ```
 
 - **EandG.py**  
   Build engagement (E) and graph (G) matrices
+  ```
+  Note: lambda_decay=0.2
+  ```
 
 - **E_hat_E_filled.py**  
   Compute estimated engagement matrix and fill missing values
 
 - **gibbs_sampler.py**  
   Core Gibbs sampler for latent factors
+  ```
+  Note:
+  - We use jitter & symmetrize while create precision matrix with eps=1e-5
+  - alpha=5, beta=1, K=15
+  ```
 
 - **logger.py**  
   Console and rotating-file logger configuration
 
 - **priors.py**  
   Gaussian–Wishart prior implementation
+  ```
+  Note: beta0 = 1, nu0=0
+  ```
 
 - **run_engage.py**  
   End-to-end training: sample parameters and save results
@@ -79,11 +93,6 @@ This repository contains a Python implementation of the ENGAGE model for time-se
    ```bash
    python check_dataset.py
    ```
-3. Clean and convert to CSV with timestamps:
-
-   ```bash
-   python data_preprosess.py data/train_filtered.xml
-   ```
 
 ## Training
 
@@ -109,15 +118,3 @@ python test_engage.py --test data/test_data.xml --top_k 5
 
 Results (Precision\@5, Recall\@5, MRR, nDCG) are printed to console and saved in `results/engage_test.log`.
 
-## Configuration
-
-* **Hyperparameters** (in `run_engage.py` and `gibbs_sampler.py`):
-
-  * `alpha`, `beta`: precision parameters
-  * `K`: latent dimension
-  * Sampling schedule: `n_iter`, `burn_in`, `thin`
-
-* **Logging** (in `logger.py`):
-
-  * Console level: INFO
-  * File level: DEBUG
